@@ -15,25 +15,40 @@ python-chess = "^1.999"
 pydantic = "^2.4.2"
 pydantic-settings = "^2.0.3"
 cairosvg = "^2.7.1"
+sqlalchemy = { version = "^2.0.22", extras = ["asyncio"] }
+asyncpg = "^0.28.0"
+alembic = "^1.12.1"
+matplotlib = "^3.8.0"
+greenlet = "^3.0.1"
+requests = "^2.31.0"
+httpx = "^0.25.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.2"
 black = "^23.10.0"
 isort = "^5.12.0"
 ipykernel = "^6.25.2"
+watchdog = "^3.0.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-start_bot = 'bot.main:start_bot'
+start_bot = 'bot:start'
 
 [tool.isort]
 profile = "black"
 
+[tool.poe]
+envfile = ".env"
+
 [tool.poe.tasks]
 format = [
-    { cmd ="isort src" }, 
-    { cmd = "black src" }
+    { cmd ="isort src migrations" }, 
+    { cmd = "black src migrations" }
 ]
+migrate = { cmd = "alembic migrate head" }
+dev = { cmd = "start_bot" }
+# dev = { cmd = "watchmedo shell-command --patterns='*.py' --recursive --command='start_bot' src" }
+inject_jokes = { cmd = "python src/scripts/inject_jokes.py" }
